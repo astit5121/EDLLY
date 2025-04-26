@@ -1,6 +1,12 @@
-// src/screens/HomeScreen.tsx
 import React from 'react';
-import { SafeAreaView, Text, Button, StyleSheet, View, TouchableOpacity } from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import { useTheme } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../AppNavigator';
 
@@ -8,64 +14,60 @@ type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
 };
 
-const HomeScreen: React.FC<Props> = ({ navigation }) => (
-  <SafeAreaView style={styles.container}>
-    <View style={styles.inner}>
-      {/* App Name Styled with Bold and Stylish Font */}
-      <Text style={styles.appName}>EDLLY</Text>
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  const { colors: themeColors } = useTheme();
 
-      {/* Centered Welcome Text */}
-      <Text style={styles.title}>Hello!</Text>
-    </View>
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <View style={styles.inner}>
+        <Text style={[styles.appName, { color: themeColors.primary }]}>EDLLY</Text>
+        <Text style={[styles.title, { color: themeColors.text }]}>Hello!</Text>
+      </View>
 
-    {/* Start Button */}
-    <TouchableOpacity
-      style={styles.button}
-      onPress={() => navigation.navigate('BookList')}
-    >
-      <Text style={styles.buttonText}>START</Text>
-    </TouchableOpacity>
-  </SafeAreaView>
-);
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: themeColors.primary }]}
+        onPress={() => navigation.navigate('BookList')}
+      >
+        <Text style={styles.buttonText}>START</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end', // Pushes button to the bottom
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#f0f8ff', // Light background color
     padding: 20,
   },
   inner: {
-    flex: 1, // Takes up the available space before pushing button
-    justifyContent: 'center', // Vertically centers content
-    alignItems: 'center', // Horizontally centers content
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     textAlign: 'center',
   },
   appName: {
-    fontSize: 48, // Larger font size for the app name
-    fontWeight: '900', // Very bold text for emphasis
-    color: '#004b87',
-    marginBottom: 40, // Spacing below the app name
-    letterSpacing: 2, // Adds some spacing between the letters
+    fontSize: 48,
+    fontWeight: '900',
+    marginBottom: 40,
+    letterSpacing: 2,
   },
   title: {
     fontSize: 32,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 20, // Added space below to avoid too much cramping
+    marginBottom: 20,
   },
   button: {
-    width: '80%', // Makes the button wider
-    backgroundColor: '#0058a3', // Custom button color
-    paddingVertical: 15, // Adds padding for height
-    borderRadius: 10, // Rounded corners
+    width: '80%',
+    paddingVertical: 15,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 30, // Adds space below the button
+    marginBottom: 30,
   },
   buttonText: {
-    fontSize: 24, // Larger text for the button
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
   },

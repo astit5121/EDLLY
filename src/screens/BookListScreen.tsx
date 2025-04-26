@@ -1,31 +1,102 @@
-// src/screens/BookListScreen.tsx
-import React from 'react';
-import { FlatList, Text, TouchableOpacity, StyleSheet, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  Dimensions,
+  TextInput,
+  ScrollView,
+} from 'react-native';
+import { useTheme } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../AppNavigator';
 import { books } from '../data/books';
 
+const screenWidth = Dimensions.get('window').width;
+const numColumns = 2;
+const itemSize = screenWidth / numColumns - 30;
+
 type Props = NativeStackScreenProps<RootStackParamList, 'BookList'>;
 
-const BookListScreen: React.FC<Props> = ({ navigation }) => {
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <Text style={styles.header}>Available Books</Text>
+const colors = ['#FF6B6B', '#5D9CEC', '#4ECDC4', '#F7B733', '#AC92EC', '#48CFAD'];
+const categories = ['All', 'Basics', 'Grammar', 'Science', 'Math', 'Stories'];
 
-      {/* FlatList to display books */}
-      <FlatList
-        data={books}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+const BookListScreen: React.FC<Props> = ({ navigation }) => {
+  const { colors: themeColors } = useTheme();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const filteredBooks = books.filter((book) => {
+    const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'All';
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <TextInput
+          style={[styles.searchInput, { backgroundColor: themeColors.card, color: themeColors.text }]}
+          placeholder="Search books..."
+          placeholderTextColor={themeColors.text + '99'}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <TouchableOpacity style={styles.profileButton}>
+          <Text style={styles.profileText}>👤</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Category Filter */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+        {categories.map((cat) => (
           <TouchableOpacity
-            style={styles.bookItem}
+            key={cat}
+            style={[
+              styles.categoryButton,
+              {
+                backgroundColor:
+                  selectedCategory === cat ? themeColors.primary : themeColors.card,
+              },
+            ]}
+            onPress={() => setSelectedCategory(cat)}
+          >
+            <Text
+              style={{
+                color: selectedCategory === cat ? '#fff' : themeColors.text,
+                fontWeight: 'bold',
+              }}
+            >
+              {cat}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Header */}
+      <Text style={[styles.header, { color: themeColors.text }]}>Book Stats</Text>
+
+      {/* Book Grid */}
+      <FlatList
+        data={filteredBooks}
+        keyExtractor={(item) => item.id}
+        numColumns={numColumns}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors[index % colors.length],
+              },
+            ]}
             onPress={() => navigation.navigate('Book', { bookId: item.id })}
           >
-            <View style={styles.bookCard}>
-              {/* Optional: Add an image for each book if you have book covers */}
-              <Text style={styles.bookTitle}>{item.title}</Text>
-            </View>
+            <Text style={styles.cardTitle}>{item.title}</Text>
           </TouchableOpacity>
         )}
       />
@@ -37,44 +108,62 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f0f8ff', // Light background color for the entire screen
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    marginRight: 10,
+  },
+  profileButton: {
+    padding: 8,
+    backgroundColor: '#ccc',
+    borderRadius: 8,
+  },
+  profileText: {
+    fontSize: 18,
+  },
+  categoryScroll: {
+    marginBottom: 10,
+  },
+  categoryButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 8,
   },
   header: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#004b87', // Stylish dark blue color for header
     marginBottom: 20,
     textAlign: 'center',
   },
-  bookItem: {
-    marginBottom: 20, // Increased space between items
-  },
-  bookCard: {
-    flexDirection: 'row',
+  card: {
+    width: itemSize,
+    height: 140,
+    borderRadius: 16,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f2a6b4', // Soft pink background for book items
-    padding: 20, // Adjusted padding for better sizing
-    borderRadius: 12,
-    shadowColor: '#000', // Shadow for some depth
+    marginBottom: 20,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3, // Slightly increased shadow opacity for a more dramatic effect
+    shadowOpacity: 0.2,
     shadowRadius: 6,
-    elevation: 5, // Elevation for Android shadow
-    height: 120, // Height for each book item
-    justifyContent: 'center', // Center contents vertically
-    marginHorizontal: 10, // Ensures the box fills most of the width
+    elevation: 6,
   },
-  bookImage: {
-    height: 80, // Image size
-    borderRadius: 10,
-  },
-  bookTitle: {
-    fontSize: 24, // Larger font size for the book title
+  cardTitle: {
+    fontSize: 18,
     fontWeight: '600',
-    color: '#003366', // Dark blue for the title
-    textAlign: 'center', // Ensure title is centered inside the box
-    flex: 1, // Allow the title to take up remaining space and center it
-    textAlignVertical: 'center', // Ensures vertical centering in the box (on Android)
+    color: '#fff',
+    textAlign: 'center',
+    paddingHorizontal: 10,
   },
 });
 

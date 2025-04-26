@@ -7,9 +7,7 @@ export const books = [
         {
           id: '1',
           title: 'Chapter 1: Introduction',
-          content: `📘 Chapter 1: Introduction to Basic English
-            Welcome to your English learning journey! 🎉
-            ...`
+          content: 'Welcome to the world of Basic English! Whether you are learning English as a second language or just brushing up on the fundamentals, this guide will help you get started. English is a versatile and widely used language around the world, and understanding its basic components is essential for communication.'
         },
         {
           id: '2',
@@ -78,7 +76,7 @@ export const books = [
         {
           id: '1',
           title: 'Chapter 1: What is Science?',
-          content: '📘 Chapter 1: What is Science?\nScience is a systematic study of the natural world...'
+          content: 'Science is a systematic and structured approach to understanding the natural world, involving the study of physical and natural phenomena. It is a field of knowledge and inquiry that seeks to explain how the world works through observation, experimentation, and analysis. Science helps us understand the laws and principles that govern the universe, ranging from the smallest particles to the vastness of space.'
         },
         {
           id: '2',
@@ -87,7 +85,7 @@ export const books = [
         },
         {
           id: '3',
-          title: 'Chapter 3: The Scientific Method',
+          title: 'Chapter 3: 📘 Chapter the Scientific Method',
           content: '📘 Chapter 3: The Scientific Method\nThe scientific method is a process for experimentation...'
         },
         {
